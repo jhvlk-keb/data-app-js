@@ -1,9 +1,8 @@
-FROM quay.io/keboola/sandboxes-data-science:latest
+FROM python:3.11-slim
 
-COPY . /app
 WORKDIR /app
-
+COPY . .
 RUN pip install --no-cache-dir .
 
-COPY keboola-config/supervisord/app.conf /etc/supervisor/conf.d/app.conf
-COPY keboola-config/nginx/sites/app.conf /etc/nginx/sites-enabled/app.conf
+EXPOSE 8080
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
