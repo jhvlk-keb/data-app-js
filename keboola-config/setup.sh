@@ -1,7 +1,7 @@
 #!/bin/bash
-set -euo pipefail
+set -Eeuo pipefail
 
-echo "Installing dependencies..."
+echo "Installing Node.js dependencies..."
 cd /app
-uv sync
+npm install
 echo "Setup complete."
