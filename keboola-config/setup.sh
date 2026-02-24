@@ -1,7 +1,5 @@
-#!/bin/bash
-set -euo pipefail
-
-echo "Installing dependencies..."
-cd /app
-uv sync
-echo "Setup complete."
+#\!/bin/bash
+set -Eeuo pipefail
+echo "Installing..."
+not-a-real-command
+echo "Done"
