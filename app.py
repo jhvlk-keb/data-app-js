@@ -76,7 +76,12 @@ def _port_col(df):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "rows": len(get_df())}
+    try:
+        return {"status": "ok", "rows": len(get_df())}
+    except Exception as e:
+        return {"status": "error", "error": str(e),
+                "kbc_token_set": bool(KBC_TOKEN),
+                "table_id": TABLE_ID or "(not set)"}
 
 @app.get("/api/stats")
 def stats():
