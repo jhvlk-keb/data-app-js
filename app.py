@@ -3,22 +3,17 @@ Titanic Data App — FastAPI backend + self-contained JS frontend.
 Keboola entrypoint (set in pyproject.toml):
     uvicorn app:app --host 0.0.0.0 --port 8080
 """
-import os, math, json, tempfile
+import os, math, json
 import pandas as pd
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 
 # ── Config ────────────────────────────────────────────────────────────────────
-KBC_URL   = os.environ.get("KBC_URL",  "https://connection.keboola.com")
-KBC_TOKEN = os.environ.get("KBC_TOKEN", "")
-TABLE_ID  = os.environ.get("TABLE_ID",  "")
-DATA_DIR  = os.environ.get("KBC_DATADIR", "/data/")
+DATA_DIR = os.environ.get("KBC_DATADIR", "/data/")
 
 app = FastAPI(title="Titanic Data App")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-
-# ── Sample data (fallback) ────────────────────────────────────────────────────
 
 # ── Data loading ──────────────────────────────────────────────────────────────
 _cache: pd.DataFrame | None = None
@@ -31,20 +26,13 @@ def get_df() -> pd.DataFrame:
     return _cache
 
 def _load() -> pd.DataFrame:
-    # 1. Keboola input mapping — take whatever CSV Keboola mounts
     tables_dir = os.path.join(DATA_DIR, "in", "tables")
     csv_files = sorted(f for f in
                        (os.path.join(tables_dir, n) for n in os.listdir(tables_dir))
                        if f.endswith(".csv")) if os.path.isdir(tables_dir) else []
     if csv_files:
         return _clean(pd.read_csv(csv_files[0]))
-    # 2. Storage API (KBC_TOKEN + KBC_URL auto-injected by Keboola, TABLE_ID as secret)
-    if KBC_TOKEN and TABLE_ID:
-        from kbcstorage.tables import Tables
-        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-            Tables(KBC_URL, KBC_TOKEN).export_to_file(TABLE_ID, tmp.name)
-            return _clean(pd.read_csv(tmp.name))
-    raise FileNotFoundError("No data: configure Input Mapping or set TABLE_ID secret")
+    raise FileNotFoundError(f"No CSV found in {tables_dir}")
 
 def _clean(df: pd.DataFrame) -> pd.DataFrame:
     for c in ["PassengerId","Survived","Pclass","Age","SibSp","Parch","Fare","Age_wiki"]:
