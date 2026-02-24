@@ -13,3 +13,16 @@ dependencies = [
 [build-system]
 requires      = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# Simulate a private PyPI index.
+# Replace the url below with your actual private registry (e.g. Artifactory,
+# devpi, AWS CodeArtifact) and add credentials via UV_INDEX_SIMULATED_PRIVATE_PASSWORD
+# or a .netrc / keyring entry.
+# ---------------------------------------------------------------------------
+[tool.uv.sources]
+
+[[tool.uv.index]]
+name    = "simulated-private"
+url     = "https://pypi.org/simple/"
+default = true
