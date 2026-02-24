@@ -53,9 +53,10 @@ def get_df() -> pd.DataFrame:
 
 def _load() -> pd.DataFrame:
     # 1. Keboola input mapping (CSV mounted by Keboola at runtime)
-    csv_path = os.path.join(DATA_DIR, "in", "tables", "passengers.csv")
-    if os.path.exists(csv_path):
-        return _clean(pd.read_csv(csv_path))
+    for filename in ("TitanicDemoData.csv", "passengers.csv"):
+        csv_path = os.path.join(DATA_DIR, "in", "tables", filename)
+        if os.path.exists(csv_path):
+            return _clean(pd.read_csv(csv_path))
     # 2. Storage API
     if KBC_TOKEN:
         try:
@@ -73,6 +74,9 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
     for c in ["PassengerId","Survived","Pclass","Age","SibSp","Parch","Fare","Age_wiki"]:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
+    for c in ["PassengerId","Survived","Pclass","SibSp","Parch"]:
+        if c in df.columns:
+            df[c] = df[c].astype("Int64")
     port_map = {"S":"Southampton","C":"Cherbourg","Q":"Queenstown"}
     for col in ("Boarded","Embarked"):
         if col in df.columns:
