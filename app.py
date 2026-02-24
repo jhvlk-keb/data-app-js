@@ -52,11 +52,13 @@ def get_df() -> pd.DataFrame:
     return _cache
 
 def _load() -> pd.DataFrame:
-    # 1. Keboola input mapping (CSV mounted by Keboola at runtime)
-    for filename in ("TitanicDemoData.csv", "passengers.csv"):
-        csv_path = os.path.join(DATA_DIR, "in", "tables", filename)
-        if os.path.exists(csv_path):
-            return _clean(pd.read_csv(csv_path))
+    # 1. Keboola input mapping — take whatever CSV Keboola mounts
+    tables_dir = os.path.join(DATA_DIR, "in", "tables")
+    csv_files = sorted(f for f in
+                       (os.path.join(tables_dir, n) for n in os.listdir(tables_dir))
+                       if f.endswith(".csv")) if os.path.isdir(tables_dir) else []
+    if csv_files:
+        return _clean(pd.read_csv(csv_files[0]))
     # 2. Storage API
     if KBC_TOKEN:
         try:
