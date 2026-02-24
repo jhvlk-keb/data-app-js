@@ -3,43 +3,19 @@ Titanic Data App — FastAPI backend + self-contained JS frontend.
 Keboola entrypoint (set in pyproject.toml):
     uvicorn app:app --host 0.0.0.0 --port 8080
 """
-import os, io, math, json, tempfile
+import os, math, json
 import pandas as pd
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 
 # ── Config ────────────────────────────────────────────────────────────────────
-KBC_URL   = os.environ.get("KBC_URL",   "https://connection.keboola.com")
-KBC_TOKEN = os.environ.get("KBC_TOKEN", "")
-TABLE_ID  = os.environ.get("TABLE_ID",  "in.c-titanic.passengers")
 DATA_DIR  = os.environ.get("KBC_DATADIR", "/data/")
 
 app = FastAPI(title="Titanic Data App")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # ── Sample data (fallback) ────────────────────────────────────────────────────
-SAMPLE_CSV = """PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked,WikiId,Name_wiki,Age_wiki,Hometown,Boarded,Destination,Lifeboat,Body,Class
-1,0,3,"Braund, Mr. Owen Harris",male,22,1,0,A/5 21171,7.25,,S,,,,Bridgerule Devon England,Southampton,Qu'Appelle Valley Canada,,,3
-2,1,1,"Cumings, Mrs. John Bradley",female,38,1,0,PC 17599,71.28,C85,C,,,,New York US,Cherbourg,New York US,4,,1
-3,1,3,"Heikkinen, Miss. Laina",female,26,0,0,STON/O2. 3101282,7.93,,S,,,,Jyvaskyla Finland,Southampton,New York City,14,,3
-4,1,1,"Futrelle, Mrs. Jacques Heath",female,35,1,0,113803,53.1,C123,S,,,,Scituate Massachusetts,Southampton,Scituate Massachusetts,D,,1
-5,0,3,"Allen, Mr. William Henry",male,35,0,0,373450,8.05,,S,,,,Birmingham England,Southampton,New York City,,,3
-6,0,3,"Moran, Mr. James",male,,0,0,330877,8.46,,Q,,,,Cork Ireland,Queenstown,New York City,,,3
-7,0,1,"McCarthy, Mr. Timothy J",male,54,0,0,17463,51.86,E46,S,,,,Dorchester Massachusetts,Southampton,New York City,,,1
-8,0,3,"Palsson, Master. Gosta Leonard",male,2,3,1,349909,21.08,,S,,,,Bjuv Sweden,Southampton,Chicago US,,,3
-9,1,3,"Johnson, Mrs. Oscar W",female,27,0,2,347742,11.13,,S,,,,Sweden,Southampton,Minneapolis US,15,,3
-10,1,2,"Nasser, Mrs. Nicholas",female,14,1,0,237736,30.07,,C,,,,Beirut Lebanon,Cherbourg,New York City,14,,2
-11,1,3,"Sandstrom, Miss. Marguerite Rut",female,4,1,1,PP 9549,16.70,,S,,,,Filipstad Sweden,Southampton,Fresno California,13,,3
-12,1,1,"Bonnell, Miss. Elizabeth",female,58,0,0,113783,26.55,C103,S,,,,Birkdale England,Southampton,New York City,8,,1
-13,0,3,"Saundercock, Mr. William Henry",male,20,0,0,A/5. 2151,8.05,,S,,,,Devon England,Southampton,New York City,,,3
-14,0,3,"Andersson, Mr. Anders Johan",male,39,1,5,347082,31.27,,S,,,,Kisa Sweden,Southampton,Winnipeg Canada,,,3
-15,0,3,"Vestrom, Miss. Hulda Amanda",female,14,0,0,350406,7.85,,S,,,,Sweden,Southampton,New York City,,,3
-16,1,2,"Hewlett, Mrs. Mary D",female,55,0,0,248706,16.0,,S,,,,England,Southampton,Rapid City SD,13,,2
-17,0,3,"Rice, Master. Eugene",male,2,4,1,382652,29.13,,Q,,,,Athlone Ireland,Queenstown,Spokane WA,,,3
-18,1,2,"Williams, Mr. Charles Eugene",male,,0,0,244373,13.0,,S,,,,Cos Cob Connecticut,Southampton,Barnstaple England,,,2
-19,0,3,"Vander Planke, Mrs. Julius",female,31,1,0,345763,18.0,,S,,,,Gullegem Belgium,Southampton,New York City,,,3
-20,1,3,"Masselmani, Mrs. Fatima",female,,0,0,2649,7.23,,C,,,,Syria,Cherbourg,New York City,C,,3"""
 
 # ── Data loading ──────────────────────────────────────────────────────────────
 _cache: pd.DataFrame | None = None
@@ -59,18 +35,7 @@ def _load() -> pd.DataFrame:
                        if f.endswith(".csv")) if os.path.isdir(tables_dir) else []
     if csv_files:
         return _clean(pd.read_csv(csv_files[0]))
-    # 2. Storage API
-    if KBC_TOKEN:
-        try:
-            from kbcstorage.client import Client
-            client = Client(KBC_URL, KBC_TOKEN)
-            with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-                client.tables.export_to_file(TABLE_ID, tmp.name)
-                return _clean(pd.read_csv(tmp.name))
-        except Exception:
-            pass
-    # 3. Bundled sample
-    return _clean(pd.read_csv(io.StringIO(SAMPLE_CSV)))
+    raise FileNotFoundError(f"No CSV found in {tables_dir}")
 
 def _clean(df: pd.DataFrame) -> pd.DataFrame:
     for c in ["PassengerId","Survived","Pclass","Age","SibSp","Parch","Fare","Age_wiki"]:
