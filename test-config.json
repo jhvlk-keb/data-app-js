@@ -1,0 +1,14 @@
+{
+  "pip_repositories": [
+    {
+      "url": "https://pypi.example.com/simple/",
+      "#credentials": "mytoken123"
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.4-pip-credentials-token"
+    }
+  }
+}
