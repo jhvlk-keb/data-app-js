@@ -1,0 +1,14 @@
+{
+  "pip_repositories": [
+    {
+      "url": "https://pypi.example.com/simple/",
+      "#credentials": "secret-token"
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.8-pip-uv-toml-permissions"
+    }
+  }
+}
