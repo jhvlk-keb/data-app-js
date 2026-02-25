@@ -1,0 +1,17 @@
+{
+  "input": {
+    "tables": [
+      {
+        "source": "in.c-titanic.titanicdemodata--1-",
+        "destination": "titanicdemodata.csv"
+      }
+    ],
+    "files": []
+  },
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/9.4-data-loader-timeout"
+    }
+  }
+}
