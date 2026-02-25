@@ -1,0 +1,22 @@
+{
+  "pip_repositories": [
+    {
+      "url": "http://internal.example.com/simple/",
+      "#credentials": "user:pass",
+      "add_trusted_host": true
+    },
+    {
+      "url": "https://pypi.example.com/simple/",
+      "#credentials": "token123"
+    },
+    {
+      "url": "https://pypi.org/simple/"
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.6-pip-multiple-repos"
+    }
+  }
+}
