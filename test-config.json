@@ -1,0 +1,14 @@
+{
+  "pip_repositories": [
+    {
+      "url": "http://pypi.internal.example.com/simple/",
+      "add_trusted_host": true
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.5-pip-trusted-host"
+    }
+  }
+}
