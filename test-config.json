@@ -1,0 +1,12 @@
+{
+  "input": {
+    "tables": [],
+    "files": []
+  },
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/9.2-input-mapping-empty"
+    }
+  }
+}
