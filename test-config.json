@@ -1,0 +1,13 @@
+{
+  "pip_repositories": [
+    {
+      "url": "https://pypi.org/simple/"
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.2-pip-url-only"
+    }
+  }
+}
