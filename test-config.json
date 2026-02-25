@@ -1,0 +1,14 @@
+{
+  "pip_repositories": [
+    {
+      "name": "bad-repo",
+      "add_trusted_host": false
+    }
+  ],
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/8.7-pip-missing-url"
+    }
+  }
+}
