@@ -1,0 +1,8 @@
+{
+  "dataApp": {
+    "git": {
+      "repository": "https://github.com/jhvlk-keb/data-app-js.git",
+      "branch": "test/12.1-run-as-app-user"
+    }
+  }
+}
